@@ -76,9 +76,6 @@ this.pageListener.add();
 
 ## TESTS
 
-All tests can run locally. All tests are also 
-### Local
-
 **Install Dependencies**
 
 ```
