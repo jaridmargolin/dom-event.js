@@ -1,22 +1,32 @@
-/*
+/*!
  * dom-event.js
  * 
- * (C) 2014 Jarid Margolin
- * MIT LICENCE
- *
+ * Copyright (c) 2014
  */
 
 
 
 
+/* -----------------------------------------------------------------------------
+ * DOMEvent
+ * ---------------------------------------------------------------------------*/
 
-// ----------------------------------------------------------------------------
-// DOMEvent
-//
-// Convenient class used to work with addEventListener.
-// ----------------------------------------------------------------------------
-
-function DOMEvent(el, eventName, handler, context) {
+/**
+ * Convenient class used to work with addEventListener.
+ *
+ * @example
+ * var listener = new DOMEvent(document, 'touchstart', handler, this);
+ *
+ * @constructor
+ * @public
+ *
+ * @param {object} el - Element to add the EventListener on.
+ * @param {string} eventName - Name of the event to listen for.
+ * @param {function} handler - Function called when event is fired.
+ *   Passed `evt` as the first argument.
+ * @param {object} context - Conetext to call handler with.
+ */
+var DOMEvent = function (el, eventName, handler, context) {
   // Make args available to instance
   this.el = el;
   this.eventName = eventName;
@@ -25,12 +35,52 @@ function DOMEvent(el, eventName, handler, context) {
 
   // Attach
   this.add();
-}
+};
 
-//
-// Handler that manages context, and normalizes both 
-// preventDefault and stopPropagation.
-//
+
+/**
+ * Remove the EventListener
+ *
+ * @example
+ * listener.remove();
+ *
+ * @public
+ */
+DOMEvent.prototype.remove = function () {
+  this.el.removeEventListener(this.eventName, this.cachedHandler);
+};
+
+
+/**
+ * Add the `EventListener`. This method is called internally in
+ * the constructor. It can also be used to re-attach a listener
+ * that was previously removed.
+ *
+ * @private
+ */
+DOMEvent.prototype.add = function () {
+  // Cache this
+  var self = this;
+
+  // Cache handler so it can be removed.
+  self.cachedHandler = function (e) {
+    self._handler.call(self, e, this);
+  };
+
+  // Modified handler
+  self.el.addEventListener(self.eventName, self.cachedHandler, false);
+};
+
+
+/**
+ * Handler that manages context, and normalizes both 
+ * preventDefault and stopPropagation.
+ *
+ * @private
+ *
+ * @param {string} name - Name of event to listen for.
+ * @param {object} event - Raw event object. 
+ */
 DOMEvent.prototype._handler = function (e, context) {
   // Copy props to new evt object. This is shallow.
   // Only done so that I can modify stopPropagation
@@ -62,35 +112,10 @@ DOMEvent.prototype._handler = function (e, context) {
   this.handler.call(this.context || context, evt);
 };
 
-//
-// Add the `EventListener`. This method is called internally in
-// the constructor. It can also be used to re-attach a listener
-// that was previously removed.
-//
-DOMEvent.prototype.add = function () {
-  // Cache this
-  var self = this;
 
-  // Cache handler so it can be removed.
-  self.cachedHandler = function (e) {
-    self._handler.call(self, e, this);
-  };
-
-  // Modified handler
-  self.el.addEventListener(self.eventName, self.cachedHandler, false);
-};
-
-//
-// Remove the `EventListener`
-//
-DOMEvent.prototype.remove = function () {
-  this.el.removeEventListener(this.eventName, this.cachedHandler);
-};
-
-
-// ----------------------------------------------------------------------------
-// Expose
-// ----------------------------------------------------------------------------
+/* -----------------------------------------------------------------------------
+ * export
+ * ---------------------------------------------------------------------------*/
 
 module.exports = DOMEvent;
 

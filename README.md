@@ -12,18 +12,7 @@ A more convenient DOM EventListener.
   * [add()](#add)
 * AMD and UMD implementations included in `dist`.
 
----
 
-## Install
-
-```
-npm install dom-event.js
-```
-```
-bower install dom-event.js
-```
-
----
 
 ## API
 
@@ -72,7 +61,7 @@ Add the `EventListener`. This method is called internally in the constructor. It
 this.pageListener.add();
 ```
 
----
+
 
 ## TESTS
 
@@ -82,17 +71,13 @@ this.pageListener.add();
 npm install
 ```
 
-```
-bower install
-```
-
 **Run/View**
 
 ```
-grunt test
+npm test
 ```
 
----
+
 
 ## License
 
